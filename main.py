@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 from common import bot_face
 from commands.est import est_convo_handler
 from commands.sleep import sleep_convo_handler
+from commands.help import help_handler
 
 load_dotenv('./.env')
 API_KEY = os.environ["API_KEY"]
@@ -33,19 +34,6 @@ logger = logging.getLogger(__name__)
 def start(update: Update, context: CallbackContext):
   text = bot_face + f'beep boop\nHello there {update.message.from_user.first_name}!\Anything i can /help you with?'
   context.bot.send_message(chat_id=update.effective_chat.id, text=text)
-
-def help(update: Update, context: CallbackContext):
-  text = bot_face + """Here are a list of commands to help you
-
-/sleep: Calculate sleep and wake up times 💤 (TODO)
-/est: estimate what time you need to leave ⏱️ (IN PROGRESS)
-/help: HELP\! 🦮
-
-Use /help <command name> for more information!
-"""
-  context.bot.send_message(chat_id=update.effective_chat.id, text=text)
-
-sleep_start_reply_keyboard = [['Sleep now', 'Wake at']]
 
 
 def echo(update: Update, context: CallbackContext):
@@ -95,7 +83,7 @@ def main() -> None:
   dispatcher = updater.dispatcher
 
   start_handler = CommandHandler('start', start)
-  help_handler = CommandHandler('help', help)
+
   #echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
   #caps_handler = CommandHandler('caps', caps)
   unknown_handler = MessageHandler(Filters.command, unknown)
