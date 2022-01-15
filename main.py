@@ -17,7 +17,8 @@ import logging
 from dotenv import load_dotenv
 
 from common import bot_face
-from commands.est import est_conv_handler
+from commands.est import est_convo_handler
+from commands.sleep import sleep_convo_handler
 
 load_dotenv('./.env')
 API_KEY = os.environ["API_KEY"]
@@ -30,7 +31,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def start(update: Update, context: CallbackContext):
-  text = bot_face + f'beep boop\nHello there {update.message.from_user.first_name}!\nhow may i /help you?'
+  text = bot_face + f'beep boop\nHello there {update.message.from_user.first_name}!\Anything i can /help you with?'
   context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 def help(update: Update, context: CallbackContext):
@@ -95,15 +96,16 @@ def main() -> None:
 
   start_handler = CommandHandler('start', start)
   help_handler = CommandHandler('help', help)
-  echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
-  caps_handler = CommandHandler('caps', caps)
+  #echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
+  #caps_handler = CommandHandler('caps', caps)
   unknown_handler = MessageHandler(Filters.command, unknown)
 
   dispatcher.add_handler(start_handler)
   dispatcher.add_handler(help_handler)
-  dispatcher.add_handler(caps_handler)
-  dispatcher.add_handler(est_conv_handler)
-  dispatcher.add_handler(echo_handler)
+  #dispatcher.add_handler(caps_handler)
+  dispatcher.add_handler(est_convo_handler)
+  dispatcher.add_handler(sleep_convo_handler)
+  # dispatcher.add_handler(echo_handler)
   dispatcher.add_handler(unknown_handler)
 
   dispatcher.add_error_handler(error_handler)

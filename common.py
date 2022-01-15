@@ -1,4 +1,4 @@
-from telegram import Update
+from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import (
   CallbackContext,
   ConversationHandler,
@@ -15,7 +15,14 @@ def convo_cancel(update: Update, context: CallbackContext) -> int:
   update.message.reply_text(
     bot_face + 
     'Cancelled! Anything else i can /help you with?'
+    ,reply_markup=ReplyKeyboardRemove()
   )
 
   return ConversationHandler.END
 
+def convo_except(update: Update, context: CallbackContext) -> int:
+  update.message.reply_text(
+    bot_face + 
+    "sorry i didn't understand that. \n"
+    "please try again!"
+    )

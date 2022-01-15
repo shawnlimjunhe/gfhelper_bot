@@ -15,7 +15,8 @@ from common import (
   h_or_m_regex,
   h_m_regex,
   time_format,
-  convo_cancel
+  convo_cancel,
+  convo_except
   )
 
 from utils import (
@@ -52,8 +53,8 @@ def est_reach(update: Update, context: CallbackContext) -> int:
       "So you have to reach at "
       f"`{context.user_data['reach_time'].strftime(time_format)}`\n\n"
       "How long do you think you will take to get there?\n"
-      "\(e\.g\. 1h or 1h 30m or 15m\)"
-      ,parse_mode=ParseMode.MARKDOWN_V2
+      "\(e\.g\. 1h or 1h 30m or 15m\)",
+      parse_mode=ParseMode.MARKDOWN_V2
       )
 
     return EST_TRAVEL
@@ -61,7 +62,8 @@ def est_reach(update: Update, context: CallbackContext) -> int:
   except ValueError:
     update.message.reply_text(
       bot_face +
-      'Sorry, your time was invalid, please try again'
+      'Sorry, I could not process what you sent\n'
+      'Please send the time in HH:MM period (a or p)'
     )
     return EST_REACH
 
@@ -91,8 +93,8 @@ def est_travel(update: Update, context: CallbackContext) -> int:
       f"`{reach_time.strftime(time_format)}`\n\n"
       "How long do you think you will need to get ready?\n"
       "\(e\.g\. 1h or 1h 30m or 15m\)\n\n"
-      "send /skip if you wish to skip this step" 
-      , parse_mode=ParseMode.MARKDOWN_V2
+      "send /skip if you wish to skip this step",
+      parse_mode=ParseMode.MARKDOWN_V2
     )
     
     return EST_READY
@@ -156,31 +158,22 @@ def est_ready(update: Update, context: CallbackContext) -> int:
     )
     return EST_READY
 
+convo_except_handler = MessageHandler((~Filters.command) & Filters.regex('.*'), convo_except)
 
-def est_except(update: Update, context: CallbackContext) -> int:
-  update.message.reply_text(
-    bot_face + 
-    "sorry i didn't understand that. \n"
-    "please try again!"
-    )
-
-
-est_except_handler = MessageHandler((~Filters.command) & Filters.regex('.*'), est_except)
-
-est_conv_handler = ConversationHandler(
+est_convo_handler = ConversationHandler(
   entry_points=[CommandHandler('est', est)],
   states={
     EST_REACH: [
       MessageHandler(Filters.regex(hhmm_regex), est_reach),
-      est_except_handler
+      convo_except_handler
     ],
     EST_TRAVEL: [
       MessageHandler(Filters.regex(h_or_m_regex) | Filters.regex(h_m_regex), est_travel),
-      est_except_handler
+      convo_except_handler
     ],
     EST_READY: [
       MessageHandler(Filters.regex(h_or_m_regex) | Filters.regex(h_m_regex), est_ready),
-      est_except_handler,
+      convo_except_handler,
       CommandHandler('skip', est_skip_ready)
     ]
   },
