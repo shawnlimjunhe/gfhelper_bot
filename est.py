@@ -10,7 +10,7 @@ from common import (
   time_format,
   convo_cancel
   )
-from telegram import Update
+from telegram import Update, ParseMode
 from telegram.ext import (
   Updater,
   CallbackContext,
@@ -94,9 +94,12 @@ def est_reach(update: Update, context: CallbackContext) -> int:
     context.user_data['reach_time'] = time
     update.message.reply_text(
       bot_face + 
-      f'So you have to reach at {context.user_data["reach_time"].strftime(time_format)}\n'
-      'How long do you think you will take to get there?\n'
-      '(e.g 1h or 1h 30m or 15m)')
+      "So you have to reach at "
+      f"`{context.user_data['reach_time'].strftime(time_format)}`\n"
+      "How long do you think you will take to get there?\n"
+      "\(e\.g\. 1h or 1h 30m or 15m\)"
+      ,parse_mode=ParseMode.MARKDOWN_V2
+      )
 
     return EST_TRAVEL
 
@@ -117,12 +120,24 @@ def est_travel(update: Update, context: CallbackContext) -> int:
       delta = process_h_or_m_time(travel_time)
 
     context.user_data['travel_timedelta'] = delta
+
+    reach_time = context.user_data['reach_time']
+
+    time_to_leave = dt.datetime.combine(
+    dt.date.today(), reach_time
+    ) + delta
+
     update.message.reply_text(
       bot_face +
+      "You will need to leave the house at "
+      f"`{time_to_leave.time().strftime(time_format)}`\n"
+      "to reach on time at "
+      f"`{reach_time.strftime(time_format)}`\n\n"
       "How long do you think you will need to get ready?\n"
-      "(e.g. 1h or 1h 30m or 15m)\n\n"
+      "\(e\.g\. 1h or 1h 30m or 15m\)\n\n"
       "send /skip if you wish to skip this step" 
-      )
+      , parse_mode=ParseMode.MARKDOWN_V2
+    )
     
     return EST_READY
 
@@ -134,20 +149,13 @@ def est_travel(update: Update, context: CallbackContext) -> int:
     return EST_TRAVEL
     
 
-def est_skip_ready(update: Update, context: CallbackContext):
+def est_skip_ready(update: Update, context: CallbackContext) -> int:
   """gives the user the time to leave"""
-
-  reach_time = context.user_data['reach_time']
-
-  time_to_leave = dt.datetime.combine(
-    dt.date.today(), reach_time
-    ) + context.user_data['travel_timedelta']
-
   update.message.reply_text(
-    bot_face +
-    f"You will need to leave the house at {time_to_leave.time().strftime(time_format)}\n"
-    f"to reach on time at {reach_time.strftime(time_format)}"
-  )
+      bot_face +
+      f'How else might i /help you?'
+    )
+
   return ConversationHandler.END
 
 def est_ready(update: Update, context: CallbackContext) -> int:
@@ -168,9 +176,13 @@ def est_ready(update: Update, context: CallbackContext) -> int:
     
     update.message.reply_text(
       bot_face +
-      f"You will need to start to get ready by {time_to_ready.time().strftime(time_format)}\n"
-      f"and leave the house at {time_to_leave.time().strftime(time_format)}\n"
-      f"to reach on time at {reach_time.strftime(time_format)}" 
+      "You will need to start to get ready by "
+      f"`{time_to_ready.time().strftime(time_format)}\n`"
+      f"and leave the house at "
+      f"`{time_to_leave.time().strftime(time_format)}\n`"
+      f"to reach on time at "
+      f"`{reach_time.strftime(time_format)}`" 
+      ,parse_mode=ParseMode.MARKDOWN_V2
     )
     
     return ConversationHandler.END

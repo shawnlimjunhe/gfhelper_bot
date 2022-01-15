@@ -13,7 +13,8 @@ time_format = "%I:%M %p"
 def convo_cancel(update: Update, context: CallbackContext) -> int:
   """Cancels and ends the conversation"""
   update.message.reply_text(
-    '🤖: \nCancelled! Anything else i can /help you with?'
+    bot_face + 
+    'Cancelled! Anything else i can /help you with?'
   )
 
   return ConversationHandler.END
