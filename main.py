@@ -2,23 +2,22 @@ import os
 import html
 import traceback
 import json
+import telegram
 
 from setuptools import Command
-import telegram
 from telegram import Update, ReplyKeyboardMarkup, ParseMode
 from telegram.ext import (
   Updater,
   CallbackContext,
   CommandHandler,
   MessageHandler,
-  ConversationHandler,
   Filters
   )
 import logging
 from dotenv import load_dotenv
 
 from common import bot_face
-from est import est_conv_handler
+from commands.est import est_conv_handler
 
 load_dotenv('./.env')
 API_KEY = os.environ["API_KEY"]
