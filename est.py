@@ -1,4 +1,3 @@
-import re
 import datetime as dt
 
 from multiprocessing.sharedctypes import Value
@@ -12,7 +11,6 @@ from common import (
   )
 from telegram import Update, ParseMode
 from telegram.ext import (
-  Updater,
   CallbackContext,
   CommandHandler,
   MessageHandler,
@@ -21,6 +19,7 @@ from telegram.ext import (
   )
 
 EST_REACH, EST_TRAVEL, EST_READY = range(3)
+
 
 def process_hhmm_time(txt: str)-> dt.time:
   """process the HH:MM period format to datetime object"""
@@ -40,6 +39,7 @@ def process_hhmm_time(txt: str)-> dt.time:
 
   return dt.time(hour=int(hour), minute=minute) 
   
+
 def process_h_or_m_time(txt: str)-> dt.timedelta:
   """process the h or m time format, e.g. 10 m or 1 h"""
   if txt[-1] == 'h':
@@ -47,6 +47,7 @@ def process_h_or_m_time(txt: str)-> dt.timedelta:
     hours = int(txt[:-1].strip())
     if hours > 23:
       raise ValueError('hours cannot be more than 23')
+
     return dt.timedelta(hours=-hours)
 
   else:
@@ -56,6 +57,7 @@ def process_h_or_m_time(txt: str)-> dt.timedelta:
     while minutes > 60:
       hours += 1
       minutes -= 60
+
     return dt.timedelta(hours=-hours, minutes=-minutes)
     
 
@@ -77,12 +79,13 @@ def est(update: Update, context: CallbackContext) -> int:
   """starts the conversation to estimate the time to start getting ready"""
   update.message.reply_text(
     bot_face + 
-    'What time do you need to be there by?\n\n'
-    '(e.g 9:30a or 10:30p)\n'
-    'send /cancel to cancel'
+    'What time do you need to be there by?\n'
+    '(e.g 9:30a or 10:30p)\n\n'
+    'send /cancel anytime to cancel'
   )
 
   return EST_REACH
+
 
 def est_reach(update: Update, context: CallbackContext) -> int:
   """process the reach time and 
@@ -95,7 +98,7 @@ def est_reach(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
       bot_face + 
       "So you have to reach at "
-      f"`{context.user_data['reach_time'].strftime(time_format)}`\n"
+      f"`{context.user_data['reach_time'].strftime(time_format)}`\n\n"
       "How long do you think you will take to get there?\n"
       "\(e\.g\. 1h or 1h 30m or 15m\)"
       ,parse_mode=ParseMode.MARKDOWN_V2
@@ -109,6 +112,7 @@ def est_reach(update: Update, context: CallbackContext) -> int:
       'Sorry, your time was invalid, please try again'
     )
     return EST_REACH
+
 
 def est_travel(update: Update, context: CallbackContext) -> int:
   """asks for the time need to get ready or whether to skip """
@@ -158,6 +162,7 @@ def est_skip_ready(update: Update, context: CallbackContext) -> int:
 
   return ConversationHandler.END
 
+
 def est_ready(update: Update, context: CallbackContext) -> int:
   ready_time = update.message.text
   try:
@@ -184,6 +189,11 @@ def est_ready(update: Update, context: CallbackContext) -> int:
       f"`{reach_time.strftime(time_format)}`" 
       ,parse_mode=ParseMode.MARKDOWN_V2
     )
+
+    update.message.reply_text(
+      bot_face +
+      f'How else might i /help you?'
+    )
     
     return ConversationHandler.END
 
@@ -201,6 +211,7 @@ def est_except(update: Update, context: CallbackContext) -> int:
     "sorry i didn't understand that. \n"
     "please try again!"
     )
+
 
 est_except_handler = MessageHandler((~Filters.command) & Filters.regex('.*'), est_except)
 
