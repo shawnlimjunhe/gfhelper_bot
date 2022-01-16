@@ -4,9 +4,12 @@ import datetime as dt
 def process_hhmm_time(txt: str)-> dt.time:
   """process the HH:MM period format to datetime time object"""
 
-  raw_hour, minute_period = txt.split(':')
-  minute = int(minute_period[:2])
-  period = minute_period[-1]
+  txt = txt.replace(" ", "")
+  # position of hour depends on whether input is in the form
+  # HHMMp or HMMp
+  raw_hour = int(txt[:2]) if len(txt) == 5 else int(txt[:1])
+  minute = int(txt[-3:-1])
+  period = txt[-1]
 
   hour = int(raw_hour)
   if period == 'p' and hour != 12:
