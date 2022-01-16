@@ -22,7 +22,8 @@ from common import (
 from utils import (
   process_hhmm_time,
   process_h_or_m_time,
-  process_hm_time
+  process_hm_time,
+  underline_str
 )
 
 EST_REACH, EST_TRAVEL, EST_READY = range(3)
@@ -51,7 +52,7 @@ def est_reach(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
       bot_face + 
       "So you have to reach at "
-      f"`{context.user_data['reach_time'].strftime(time_format)}`\n\n"
+      f"{context.user_data['reach_time'].strftime(time_format)}\n\n"
       "How long do you think you will take to get there?\n"
       "\(e\.g\. 1h or 1h 30m or 15m\)",
       parse_mode=ParseMode.MARKDOWN_V2
@@ -88,9 +89,9 @@ def est_travel(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
       bot_face +
       "You will need to leave the house at "
-      f"`{time_to_leave.time().strftime(time_format)}`\n"
+      + underline_str(f"{time_to_leave.time().strftime(time_format)}\n") +
       "to reach on time at "
-      f"`{reach_time.strftime(time_format)}`\n\n"
+      f"{reach_time.strftime(time_format)}\n\n"
       "How long do you think you will need to get ready?\n"
       "\(e\.g\. 1h or 1h 30m or 15m\)\n\n"
       "send /skip if you wish to skip this step",
@@ -136,11 +137,11 @@ def est_ready(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
       bot_face +
       "You will need to start to get ready by "
-      f"`{time_to_ready.time().strftime(time_format)}\n`"
+      + underline_str(f"{time_to_ready.time().strftime(time_format)}\n") +
       f"and leave the house at "
-      f"`{time_to_leave.time().strftime(time_format)}\n`"
+      + underline_str(f"{time_to_leave.time().strftime(time_format)}\n") + 
       f"to reach on time at "
-      f"`{reach_time.strftime(time_format)}`" 
+      f"{reach_time.strftime(time_format)}" 
       ,parse_mode=ParseMode.MARKDOWN_V2
     )
 

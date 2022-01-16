@@ -16,7 +16,7 @@ from common import (
     hhmm_regex,
     time_format
 )
-from utils import process_hhmm_time 
+from utils import process_hhmm_time, underline_str
 
 
 SLEEP_CHOICE, SLEEP_WAKE = range(2)
@@ -28,7 +28,7 @@ sleep_cycle_timedelta = dt.timedelta(minutes=sleep_cycle_length)
 def sleep_time_arr_to_str(times: list[dt.time])-> str:
     strs = []
     for time in times:
-        strs.append(f"`{time.strftime(time_format)}`")
+        strs.append(underline_str(f"{time.strftime(time_format)}"))
 
     return " or\n".join(strs)
 
@@ -73,16 +73,16 @@ def process_sleep_times_text(sleep_times: list[dt.time], wake_time: dt.time) -> 
         return (bot_face +
             "Hmm, it seems like you don\'t have a lot of time\n"
             "before you have to wake up at "
-            f"`{wake_time.strftime(time_format)}`\.\.\.\n"
+            f"{wake_time.strftime(time_format)}\.\.\.\n"
             "maybe a cup of coffee will help ☕")
 
     if len(sleep_times) == 1:
         return (bot_face + 
             "It seem's you have a bit to time to nap\!\n"
             "before you have to wake up at "
-            f"`{wake_time.strftime(time_format)}`\n"
+            f"{wake_time.strftime(time_format)}\n"
             "Sleep at "
-            f"`{sleep_times[0].strftime(time_format)}`"
+            + underline_str(f"{sleep_times[0].strftime(time_format)}") +
             " for a power nap\! 💪"
         )
     
@@ -101,9 +101,10 @@ def sleep(update: Update, context: CallbackContext) -> int:
         bot_face +
         f"Hi {update.message.from_user.first_name}!\n\n"
         "Choose:\n"
-        "'Sleep Now' to see what time you should wake up\n"
-        "if you sleep now\nor\n"
-        "'Wake Time' to see what time you should sleep to\n"
+        "'*Sleep Now*' to see what time you should wake up\n"
+        "if you sleep now\n"
+        "or\n"
+        "'*Wake Time*' to see what time you should sleep to\n"
         "wake up at a certain time\n\n"
         "type /cancel anytime to cancel",
         reply_markup=ReplyKeyboardMarkup(
@@ -129,7 +130,7 @@ def sleep_now(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
         bot_face +
         "If you sleep now at "
-        f"`{dt.datetime.now().time().strftime(time_format)}`\n"
+        + underline_str(f"{dt.datetime.now().time().strftime(time_format)}\n") +
         "you should wake up at:\n" +
         wake_time_str,
         reply_markup=ReplyKeyboardRemove(),

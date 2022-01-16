@@ -51,3 +51,7 @@ def process_hm_time(txt: str):
   if minutes > 59:
     raise ValueError('minutes cannot be more than 59')
   return dt.timedelta(hours=-hours, minutes=-minutes)
+
+def underline_str(text: str)-> str:
+  return ("__" + text + "__")
+  
