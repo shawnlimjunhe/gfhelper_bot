@@ -11,6 +11,10 @@ def process_hhmm_time(txt: str)-> dt.time:
   hour = int(raw_hour)
   if period == 'p' and hour != 12:
     hour += 12
+  
+  if period == 'a' and hour == 12:
+    # handle 1200a
+    hour = 0
 
   if hour > 23:
     raise ValueError('hour cannot be more than 23')
@@ -54,4 +58,3 @@ def process_hm_time(txt: str):
 
 def underline_str(text: str)-> str:
   return ("__" + text + "__")
-  
