@@ -7,7 +7,7 @@ from telegram.ext import (
     MessageHandler,
     ConversationHandler,
     Filters
-  )
+)
 
 from common import (
     bot_face,
@@ -25,14 +25,16 @@ sleep_cycle_length = 90
 fall_asleep_timedelta = dt.timedelta(minutes=fall_asleep_time_minutes)
 sleep_cycle_timedelta = dt.timedelta(minutes=sleep_cycle_length)
 
-def sleep_time_arr_to_str(times: list[dt.time])-> str:
+
+def sleep_time_arr_to_str(times: list[dt.time]) -> str:
     strs = []
     for time in times:
         strs.append(underline_str(f"{time.strftime(time_format)}"))
 
     return " or\n".join(strs)
 
-def get_sleeptimes_from_wake(waketime: dt.time)-> list[dt.time]:
+
+def get_sleeptimes_from_wake(waketime: dt.time) -> list[dt.time]:
     """
     Converts waketime to datetime object to use timedelta
     To calculate sleep times
@@ -44,11 +46,11 @@ def get_sleeptimes_from_wake(waketime: dt.time)-> list[dt.time]:
         now.day,
         waketime.hour,
         waketime.minute
-        )
-    
+    )
+
     if wake_datetime < now:
         wake_datetime += dt.timedelta(days=1)
-    
+
     time_difference = wake_datetime - now
     if time_difference.seconds < (10 * 60):
         # shouldn't sleep if less than 10 minutes
@@ -65,33 +67,34 @@ def get_sleeptimes_from_wake(waketime: dt.time)-> list[dt.time]:
         sleep_times.append(curr.time())
         curr -= sleep_cycle_timedelta
         i += 1
-    
+
     return sleep_times
+
 
 def process_sleep_times_text(sleep_times: list[dt.time], wake_time: dt.time) -> str:
     if not sleep_times:
         return (bot_face +
-            "Hmm, it seems like you don\'t have a lot of time\n"
-            "before you have to wake up at "
-            f"{wake_time.strftime(time_format)}\.\.\.\n"
-            "maybe a cup of coffee will help ☕")
+                "Hmm, it seems like you don\'t have a lot of time\n"
+                "before you have to wake up at "
+                f"{wake_time.strftime(time_format)}\.\.\.\n"
+                "maybe a cup of coffee will help ☕")
 
     if len(sleep_times) == 1:
-        return (bot_face + 
-            "It seem's you have a bit to time to nap\!\n"
-            "before you have to wake up at "
-            f"{wake_time.strftime(time_format)}\n"
-            "Sleep at "
-            + underline_str(f"{sleep_times[0].strftime(time_format)}") +
-            " for a power nap\! 💪"
-        )
-    
+        return (bot_face +
+                "It seem's you have a bit to time to nap\!\n"
+                "before you have to wake up at "
+                f"{wake_time.strftime(time_format)}\n"
+                "Sleep at "
+                + underline_str(f"{sleep_times[0].strftime(time_format)}") +
+                " for a power nap\! 💪"
+                )
+
     text = sleep_time_arr_to_str(sleep_times[::-1])
-    return (bot_face + 
-        "You can sleep at the following times to feel rested\!\n"
-        + text
-    )
-            
+    return (bot_face +
+            "You can sleep at the following times to feel rested\!\n"
+            + text
+            )
+
 
 def sleep(update: Update, context: CallbackContext) -> int:
     """starts the conversation to determine sleep or wakeup time"""
@@ -116,6 +119,7 @@ def sleep(update: Update, context: CallbackContext) -> int:
 
     return SLEEP_CHOICE
 
+
 def sleep_now(update: Update, context: CallbackContext) -> int:
     curr = dt.datetime.now()
     wake_times = [(curr + dt.timedelta(minutes=20))]
@@ -139,6 +143,7 @@ def sleep_now(update: Update, context: CallbackContext) -> int:
 
     return ConversationHandler.END
 
+
 def sleep_wake(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
         bot_face +
@@ -147,6 +152,7 @@ def sleep_wake(update: Update, context: CallbackContext) -> int:
     )
 
     return SLEEP_WAKE
+
 
 def sleep_wake_time(update: Update, context: CallbackContext) -> int:
     wake_time_raw = update.message.text
@@ -164,16 +170,16 @@ def sleep_wake_time(update: Update, context: CallbackContext) -> int:
 
     except ValueError:
         update.message.reply_text(
-        bot_face +
-        'Sorry, I could not process what you sent\n'
-        'Please send the time in HH:MM period (a or p)'
+            bot_face +
+            'Sorry, I could not process what you sent\n'
+            'Please send the time in HH:MM period (a or p)'
         )
 
         return SLEEP_WAKE
 
 
-
-convo_except_handler = MessageHandler((~Filters.command) & Filters.regex('.*'), convo_except)
+convo_except_handler = MessageHandler(
+    (~Filters.command) & Filters.regex('.*'), convo_except)
 
 sleep_convo_handler = ConversationHandler(
     entry_points=[CommandHandler('sleep', sleep)],
@@ -190,5 +196,3 @@ sleep_convo_handler = ConversationHandler(
     },
     fallbacks=[CommandHandler('cancel', convo_cancel)]
 )
-
-    
