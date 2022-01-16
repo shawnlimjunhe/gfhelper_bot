@@ -17,9 +17,11 @@ import logging
 from dotenv import load_dotenv
 
 from common import bot_face
-from commands.est import est_convo_handler
-from commands.sleep import sleep_convo_handler
-from commands.help import help_handler
+from commands import (
+    est,
+    sleep,
+    help
+)
 
 load_dotenv('./.env')
 API_KEY = os.environ["API_KEY"]
@@ -98,10 +100,10 @@ def main() -> None:
     unknown_handler = MessageHandler(Filters.command, unknown)
 
     dispatcher.add_handler(start_handler)
-    dispatcher.add_handler(help_handler)
+    dispatcher.add_handler(help.help_handler)
     # dispatcher.add_handler(caps_handler)
-    dispatcher.add_handler(est_convo_handler)
-    dispatcher.add_handler(sleep_convo_handler)
+    dispatcher.add_handler(est.est_convo_handler)
+    dispatcher.add_handler(sleep.sleep_convo_handler)
     # dispatcher.add_handler(echo_handler)
     dispatcher.add_handler(unknown_handler)
 

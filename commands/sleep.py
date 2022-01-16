@@ -1,3 +1,5 @@
+import common
+import utils
 import datetime as dt
 
 from telegram import Update, ParseMode, ReplyKeyboardMarkup, ReplyKeyboardRemove
@@ -8,15 +10,6 @@ from telegram.ext import (
     ConversationHandler,
     Filters
 )
-
-from common import (
-    bot_face,
-    convo_except,
-    convo_cancel,
-    hhmm_regex,
-    time_format
-)
-from utils import process_hhmm_time, underline_str
 
 
 SLEEP_CHOICE, SLEEP_WAKE = range(2)
@@ -29,7 +22,8 @@ sleep_cycle_timedelta = dt.timedelta(minutes=sleep_cycle_length)
 def sleep_time_arr_to_str(times: list[dt.time]) -> str:
     strs = []
     for time in times:
-        strs.append(underline_str(f"{time.strftime(time_format)}"))
+        strs.append(utils.underline_str(
+            f"{time.strftime(common.time_format)}"))
 
     return " or\n".join(strs)
 
@@ -73,27 +67,31 @@ def get_sleeptimes_from_wake(waketime: dt.time) -> list[dt.time]:
 
 def process_sleep_times_text(sleep_times: list[dt.time], wake_time: dt.time) -> str:
     if not sleep_times:
-        return (bot_face +
-                "Hmm, it seems like you don\'t have a lot of time\n"
-                "before you have to wake up at "
-                f"{wake_time.strftime(time_format)}\.\.\.\n"
-                "maybe a cup of coffee will help ☕")
+        return (
+            common.bot_face +
+            "Hmm, it seems like you don\'t have a lot of time\n"
+            "before you have to wake up at "
+            f"{wake_time.strftime(common.time_format)}\.\.\.\n"
+            "maybe a cup of coffee will help ☕"
+        )
 
     if len(sleep_times) == 1:
-        return (bot_face +
-                "It seem's you have a bit to time to nap\!\n"
-                "before you have to wake up at "
-                f"{wake_time.strftime(time_format)}\n"
-                "Sleep at "
-                + underline_str(f"{sleep_times[0].strftime(time_format)}") +
-                " for a power nap\! 💪"
-                )
+        return (
+            common.bot_face +
+            "It seem's you have a bit to time to nap\!\n"
+            "before you have to wake up at "
+            f"{wake_time.strftime(common.time_format)}\n"
+            "Sleep at "
+            + utils.underline_str(f"{sleep_times[0].strftime(common.time_format)}") +
+            " for a power nap\! 💪"
+        )
 
     text = sleep_time_arr_to_str(sleep_times[::-1])
-    return (bot_face +
-            "You can sleep at the following times to feel rested\!\n"
-            + text
-            )
+    return (
+        common.bot_face +
+        "You can sleep at the following times to feel rested\!\n"
+        + text
+    )
 
 
 def sleep(update: Update, context: CallbackContext) -> int:
@@ -101,7 +99,7 @@ def sleep(update: Update, context: CallbackContext) -> int:
     sleep_reply_keyboard = [['Sleep Now', 'Wake Time']]
 
     update.message.reply_text(
-        bot_face +
+        common.bot_face +
         f"Hi {update.message.from_user.first_name}!\n\n"
         "Choose:\n"
         "'*Sleep Now*' to see what time you should wake up\n"
@@ -132,9 +130,9 @@ def sleep_now(update: Update, context: CallbackContext) -> int:
     wake_time_str = sleep_time_arr_to_str(wake_times)
 
     update.message.reply_text(
-        bot_face +
+        common.bot_face +
         "If you sleep now at "
-        + underline_str(f"{dt.datetime.now().time().strftime(time_format)}\n") +
+        + utils.underline_str(f"{dt.datetime.now().time().strftime(time_format)}\n") +
         "you should wake up at:\n" +
         wake_time_str,
         reply_markup=ReplyKeyboardRemove(),
@@ -146,7 +144,7 @@ def sleep_now(update: Update, context: CallbackContext) -> int:
 
 def sleep_wake(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
-        bot_face +
+        common.bot_face +
         "What time do you want to wake up by?\n"
         "(e.g 930a or 1030p)"
     )
@@ -157,7 +155,7 @@ def sleep_wake(update: Update, context: CallbackContext) -> int:
 def sleep_wake_time(update: Update, context: CallbackContext) -> int:
     wake_time_raw = update.message.text
     try:
-        wake_time = process_hhmm_time(wake_time_raw)
+        wake_time = utils.process_hhmm_time(wake_time_raw)
         sleep_times = get_sleeptimes_from_wake(wake_time)
         text = process_sleep_times_text(sleep_times, wake_time)
 
@@ -170,7 +168,7 @@ def sleep_wake_time(update: Update, context: CallbackContext) -> int:
 
     except ValueError:
         update.message.reply_text(
-            bot_face +
+            common.bot_face +
             'Sorry, I could not process what you sent\n'
             'Please send the time in HH:MM period (a or p)'
         )
@@ -179,7 +177,7 @@ def sleep_wake_time(update: Update, context: CallbackContext) -> int:
 
 
 convo_except_handler = MessageHandler(
-    (~Filters.command) & Filters.regex('.*'), convo_except)
+    (~Filters.command) & Filters.regex('.*'), common.convo_except)
 
 sleep_convo_handler = ConversationHandler(
     entry_points=[CommandHandler('sleep', sleep)],
@@ -190,9 +188,9 @@ sleep_convo_handler = ConversationHandler(
             convo_except_handler
         ],
         SLEEP_WAKE: [
-            MessageHandler(Filters.regex(hhmm_regex), sleep_wake_time),
+            MessageHandler(Filters.regex(common.hhmm_regex), sleep_wake_time),
             convo_except_handler
         ]
     },
-    fallbacks=[CommandHandler('cancel', convo_cancel)]
+    fallbacks=[CommandHandler('cancel', common.convo_cancel)]
 )
