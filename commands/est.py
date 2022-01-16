@@ -34,7 +34,7 @@ def est(update: Update, context: CallbackContext) -> int:
   update.message.reply_text(
     bot_face + 
     'What time do you need to be there by?\n'
-    '(e.g 9:30a or 10:30p)\n\n'
+    '(e.g 930a or 1030p)\n\n'
     'send /cancel anytime to cancel'
   )
 
