@@ -132,7 +132,7 @@ def sleep_now(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
         common.bot_face +
         "If you sleep now at "
-        + utils.underline_str(f"{dt.datetime.now().time().strftime(time_format)}\n") +
+        + utils.underline_str(f"{dt.datetime.now().time().strftime(common.time_format)}\n") +
         "you should wake up at:\n" +
         wake_time_str,
         reply_markup=ReplyKeyboardRemove(),
