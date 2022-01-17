@@ -42,16 +42,6 @@ def start(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
-def echo(update: Update, context: CallbackContext):
-    context.bot.send_message(
-        chat_id=update.effective_chat.id, text=update.message.text)
-
-
-def caps(update: Update, context: CallbackContext):
-    text_caps = ' '.join(context.args).upper()
-    context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
-
-
 def unknown(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text="🤖: Sorry, I didn't understand that command.")
