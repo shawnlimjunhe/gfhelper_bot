@@ -27,6 +27,7 @@ load_dotenv('./.env')
 API_KEY = os.environ["API_KEY"]
 DEVELOPER_CHAT_ID = os.environ["DEVELOPER_CHAT_ID"]
 PORT = int(os.environ.get('PORT', 8443))
+IS_DEV = os.environ['DEV']
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -37,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 def start(update: Update, context: CallbackContext):
     text = bot_face + \
-        f'beep boop\nHello there {update.message.from_user.first_name}!\Anything i can /help you with?'
+        f'beep boop\nHello there {update.message.from_user.first_name}!\nAnything i can /help you with?'
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
@@ -106,10 +107,13 @@ def main() -> None:
 
     dispatcher.add_error_handler(error_handler)
 
-    updater.start_webhook(listen="0.0.0.0",
-                          port=int(PORT),
-                          url_path=API_KEY,
-                          webhook_url='https://arcane-tor-42713.herokuapp.com/' + API_KEY)
+    if IS_DEV:
+        updater.start_polling()
+    else:
+        updater.start_webhook(listen="0.0.0.0",
+                              port=int(PORT),
+                              url_path=API_KEY,
+                              webhook_url='https://arcane-tor-42713.herokuapp.com/' + API_KEY)
 
     updater.idle()
 
