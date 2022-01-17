@@ -96,16 +96,12 @@ def main() -> None:
 
     start_handler = CommandHandler('start', start)
 
-    #echo_handler = MessageHandler(Filters.text & (~Filters.command), echo)
-    #caps_handler = CommandHandler('caps', caps)
     unknown_handler = MessageHandler(Filters.command, unknown)
 
     dispatcher.add_handler(start_handler)
     dispatcher.add_handler(help.help_handler)
-    # dispatcher.add_handler(caps_handler)
     dispatcher.add_handler(est.est_convo_handler)
     dispatcher.add_handler(sleep.sleep_convo_handler)
-    # dispatcher.add_handler(echo_handler)
     dispatcher.add_handler(unknown_handler)
 
     dispatcher.add_error_handler(error_handler)
