@@ -26,7 +26,7 @@ from commands import (
 load_dotenv('./.env')
 API_KEY = os.environ["API_KEY"]
 DEVELOPER_CHAT_ID = os.environ["DEVELOPER_CHAT_ID"]
-PORT = int(os.environ.get('PORT', 5000))
+PORT = int(os.environ.get('PORT', 8443))
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -112,9 +112,8 @@ def main() -> None:
 
     updater.start_webhook(listen="0.0.0.0",
                           port=int(PORT),
-                          url_path=API_KEY)
-
-    updater.bot.setWebhook('https://arcane-tor-42713.herokuapp.com/' + API_KEY)
+                          url_path=API_KEY,
+                          webhook_url='https://arcane-tor-42713.herokuapp.com/' + API_KEY)
 
     updater.idle()
 
