@@ -96,10 +96,8 @@ When you're done, press <kbd>Ctrl</kbd>+<kbd>C</kbd> to stop the bot.
 
 Hope that it helps your significant other too! 🦔
 
-#### Enabling Developer error messages
-To allow the bot to send error logs to you
-
-Get your chat_id by paste the following code at the end of any command
+#### 5.1 Enabling Developer error messages
+To allow the bot to send error logs to you, obtain your chat_id by paste the following code at the end of any command
 ```
 print(update.effective_chat.id)
 ```
