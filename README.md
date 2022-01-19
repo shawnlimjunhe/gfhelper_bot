@@ -9,7 +9,7 @@ The main motivation for creating this project was that my girlfriend would frequ
 
 ## Features
 - Calculates sleep and wake times using the [90 minute rule](https://www.youtube.com/watch?v=Ewajc2eXZr0) `/sleep` 
-- Time calculator so estimate when to leave the house `/est`
+- Time calculator to estimate when to leave the house `/est`
 
 
  More features in the works!
