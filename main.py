@@ -16,7 +16,7 @@ from telegram.ext import (
 import logging
 from dotenv import load_dotenv
 
-from common import bot_face
+import common
 from commands import (
     est,
     sleep,
@@ -36,14 +36,15 @@ logger = logging.getLogger(__name__)
 
 
 def start(update: Update, context: CallbackContext):
-    text = bot_face + \
-        f'beep boop\nHello there {update.message.from_user.first_name}!\nAnything i can /help you with?'
+    text = common.hedgehog + \
+        f'chirp chirp \nHello there {update.message.from_user.first_name}!\nlet me /help you!'
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
 def unknown(update: Update, context: CallbackContext):
     context.bot.send_message(chat_id=update.effective_chat.id,
-                             text="🤖: Sorry, I didn't understand that command.")
+                             text=(common.hedgehog +
+                                   "Sorry, I didn't understand that command."))
 
 
 def error_handler(update: object, context: CallbackContext) -> None:

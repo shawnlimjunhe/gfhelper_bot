@@ -17,7 +17,7 @@ EST_REACH, EST_TRAVEL, EST_READY = range(3)
 def est(update: Update, context: CallbackContext) -> int:
     """starts the conversation to estimate the time to start getting ready"""
     update.message.reply_text(
-        common.bot_face +
+        common.hedgehog +
         'What time do you need to be there by?\n'
         '(e.g 930a or 1030p)\n\n'
         'send /cancel anytime to cancel'
@@ -35,7 +35,7 @@ def est_reach(update: Update, context: CallbackContext) -> int:
         time = utils.process_hhmm_time(reach_time)
         context.user_data['reach_time'] = time
         update.message.reply_text(
-            common.bot_face +
+            common.hedgehog +
             "So you have to reach at "
             f"{context.user_data['reach_time'].strftime(common.time_format)}\n\n"
             "How long do you think you will take to get there?\n"
@@ -47,7 +47,7 @@ def est_reach(update: Update, context: CallbackContext) -> int:
 
     except ValueError:
         update.message.reply_text(
-            common.bot_face +
+            common.hedgehog +
             'Sorry, I could not process what you sent\n'
             'Please send the time in HH:MM period (a or p)'
         )
@@ -72,7 +72,7 @@ def est_travel(update: Update, context: CallbackContext) -> int:
         ) + delta
 
         update.message.reply_text(
-            common.bot_face +
+            common.hedgehog +
             "You will need to leave the house at "
             + utils.underline_str(f"{time_to_leave.time().strftime(common.time_format)}\n") +
             "to reach on time at "
@@ -87,7 +87,7 @@ def est_travel(update: Update, context: CallbackContext) -> int:
 
     except ValueError:
         update.message.reply_text(
-            common.bot_face +
+            common.hedgehog +
             f'Sorry, your time was invalid as, please try again'
         )
         return EST_TRAVEL
@@ -96,7 +96,7 @@ def est_travel(update: Update, context: CallbackContext) -> int:
 def est_skip_ready(update: Update, context: CallbackContext) -> int:
     """gives the user the time to leave"""
     update.message.reply_text(
-        common.bot_face +
+        common.hedgehog +
         f'How else might i /help you?'
     )
 
@@ -120,7 +120,7 @@ def est_ready(update: Update, context: CallbackContext) -> int:
         time_to_ready = time_to_leave + delta
 
         update.message.reply_text(
-            common.bot_face +
+            common.hedgehog +
             "You will need to start to get ready by "
             + utils.underline_str(f"{time_to_ready.time().strftime(common.time_format)}\n") +
             f"and leave the house at "
@@ -130,7 +130,7 @@ def est_ready(update: Update, context: CallbackContext) -> int:
         )
 
         update.message.reply_text(
-            common.bot_face +
+            common.hedgehog +
             f'How else might i /help you?'
         )
 
@@ -138,7 +138,7 @@ def est_ready(update: Update, context: CallbackContext) -> int:
 
     except ValueError:
         update.message.reply_text(
-            common.bot_face +
+            common.hedgehog +
             f'Sorry, your time was invalid as, please try again'
         )
         return EST_READY

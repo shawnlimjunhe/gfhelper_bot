@@ -68,7 +68,7 @@ def get_sleeptimes_from_wake(waketime: dt.time) -> list[dt.time]:
 def process_sleep_times_text(sleep_times: list[dt.time], wake_time: dt.time) -> str:
     if not sleep_times:
         return (
-            common.bot_face +
+            common.hedgehog +
             "Hmm, it seems like you don\'t have a lot of time\n"
             "before you have to wake up at "
             f"{wake_time.strftime(common.time_format)}\.\.\.\n"
@@ -77,7 +77,7 @@ def process_sleep_times_text(sleep_times: list[dt.time], wake_time: dt.time) -> 
 
     if len(sleep_times) == 1:
         return (
-            common.bot_face +
+            common.hedgehog +
             "It seem's you have a bit to time to nap\!\n"
             "before you have to wake up at "
             f"{wake_time.strftime(common.time_format)}\n"
@@ -88,7 +88,7 @@ def process_sleep_times_text(sleep_times: list[dt.time], wake_time: dt.time) -> 
 
     text = sleep_time_arr_to_str(sleep_times[::-1])
     return (
-        common.bot_face +
+        common.hedgehog +
         "You can sleep at the following times to feel rested\!\n"
         + text
     )
@@ -99,7 +99,7 @@ def sleep(update: Update, context: CallbackContext) -> int:
     sleep_reply_keyboard = [['Sleep Now', 'Wake Time']]
 
     update.message.reply_text(
-        common.bot_face +
+        common.hedgehog +
         f"Hi {update.message.from_user.first_name}!\n\n"
         "Choose:\n"
         "'*Sleep Now*' to see what time you should wake up\n"
@@ -130,7 +130,7 @@ def sleep_now(update: Update, context: CallbackContext) -> int:
     wake_time_str = sleep_time_arr_to_str(wake_times)
 
     update.message.reply_text(
-        common.bot_face +
+        common.hedgehog +
         "If you sleep now at "
         + utils.underline_str(f"{dt.datetime.now().time().strftime(common.time_format)}\n") +
         "you should wake up at:\n" +
@@ -144,7 +144,7 @@ def sleep_now(update: Update, context: CallbackContext) -> int:
 
 def sleep_wake(update: Update, context: CallbackContext) -> int:
     update.message.reply_text(
-        common.bot_face +
+        common.hedgehog +
         "What time do you want to wake up by?\n"
         "(e.g 930a or 1030p)"
     )
@@ -168,7 +168,7 @@ def sleep_wake_time(update: Update, context: CallbackContext) -> int:
 
     except ValueError:
         update.message.reply_text(
-            common.bot_face +
+            common.hedgehog +
             'Sorry, I could not process what you sent\n'
             'Please send the time in HH:MM period (a or p)'
         )

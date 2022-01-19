@@ -8,7 +8,7 @@ from telegram.ext import (
 
 def help(update: Update, context: CallbackContext):
     default_text = (
-        common.bot_face +
+        common.hedgehog +
         "Here's how i can help you!\n\n"
         "/sleep: Calculate sleep and wake up times 💤\n"
         "/est: estimate what time you need to leave ⏱️\n"
@@ -34,11 +34,11 @@ def help(update: Update, context: CallbackContext):
         help_text = (context.args)[0]
         if help_text not in command_map:
             text = (
-                common.bot_face +
-                "Sorry, that command does not exist :("
+                common.hedgehog +
+                "Sorry, I did not understand that common :("
             )
         else:
-            text = common.bot_face + command_map[help_text]
+            text = common.hedgehog + command_map[help_text]
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
