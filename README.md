@@ -8,7 +8,7 @@ A telegram bot to help my girlfriend with tasks like being more punctual.
 The main motivation for creating this project was that my girlfriend would frequently be late when we went out and this was a big deal of frustration for me as I would often be the one waiting for her. 
 
 ## Features
-- Calculates sleep and wake times using the [90 minute rule](https://www.youtube.com/watch?v=Ewajc2eXZr0)`/sleep` 
+- Calculates sleep and wake times using the [90 minute rule](https://www.youtube.com/watch?v=Ewajc2eXZr0) `/sleep` 
 - Time calculator so estimate when to leave the house `/est`
 
 
