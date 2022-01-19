@@ -25,7 +25,7 @@ file an issue [here](https://github.com/shawnlimjunhe/gfhelper_bot/issues)
 
 ### Testing gfhelper_bot locally
 This guide assumes that you already have git and python 3.9 installed. 
-To check whether you have git and python installed properly:
+To check whether you have git and python properly installed:
 
 ```bash
 $ git --version
@@ -36,7 +36,7 @@ $ python --version
 ```
 
 ### 1. Clone the gfhelper_bot locally
-Go the the directory where you want to store the cinnabot code, and run this command to download the gfhelper_bot repository into a new directory called 'gfhelper_bot' or any name of your choosing: 
+Go the the directory where you want to store the gfhelper_bot code, and run this command to download the gfhelper_bot repository into a new directory called 'gfhelper_bot' or any name of your choosing: 
 
 ```bash
 $ git clone https://github.com/shawnlimjunhe/gfhelper_bot.git
@@ -97,7 +97,7 @@ When you're done, press <kbd>Ctrl</kbd>+<kbd>C</kbd> to stop the bot.
 Hope that it helps your significant other too! 🦔
 
 #### 5.1 Enabling Developer error messages
-To allow the bot to send error logs to you, obtain your chat_id by paste the following code at the end of any command
+To allow the bot to send error logs to you, obtain your chat_id by pasting the following code at the end of any command
 ```
 print(update.effective_chat.id)
 ```
