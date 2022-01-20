@@ -5,40 +5,45 @@ from telegram.ext import (
     CommandHandler,
 )
 
+help_default_txt = (
+    common.hedgehog +
+    "Here's how i can help you!\n\n"
+    "/sleep: Calculate sleep and wake up times 💤\n"
+    "/est: estimate what time you need to leave ⏱️\n"
+    "/help: HELP! 🦮\n\n"
+    "Use /help <command name> for more information!"
+)
+
+command_mapping = {
+    "est": (
+        common.hedgehog +
+        "Estimates the time to start getting ready\n"
+        "and the time to leave your house to\n"
+        "reach your destination on time"
+    ),
+    "sleep": (
+        common.hedgehog +
+        "Calculates what time you should wake up at\n"
+        "or sleep by using the 90 minute rule\n"
+        "to help you feel less groggy when you wake up!"
+    )
+}
+
+invalid_command_txt = (
+    common.hedgehog +
+    "Sorry, I did not understand that common :("
+)
+
 
 def help(update: Update, context: CallbackContext):
-    default_text = (
-        common.hedgehog +
-        "Here's how i can help you!\n\n"
-        "/sleep: Calculate sleep and wake up times 💤\n"
-        "/est: estimate what time you need to leave ⏱️\n"
-        "/help: HELP! 🦮\n\n"
-        "Use /help <command name> for more information!"
-    )
-    command_map = {
-        "est": (
-            "Estimates the time to start getting ready\n"
-            "and the time to leave your house to\n"
-            "reach your destination on time"
-        ),
-        "sleep": (
-            "Calculates what time you should wake up at\n"
-            "or sleep by using the 90 minute rule\n"
-            "to help you feel less groggy when you wake up!"
-        )
-    }
-
     if not (context.args):
-        text = default_text
+        text = help_default_txt
     else:
         help_text = (context.args)[0]
-        if help_text not in command_map:
-            text = (
-                common.hedgehog +
-                "Sorry, I did not understand that common :("
-            )
+        if help_text not in command_mapping:
+            text = invalid_command_txt
         else:
-            text = common.hedgehog + command_map[help_text]
+            text = command_mapping[help_text]
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
