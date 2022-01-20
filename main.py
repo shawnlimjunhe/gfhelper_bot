@@ -108,7 +108,7 @@ def main() -> None:
         updater.start_webhook(listen="0.0.0.0",
                               port=int(PORT),
                               url_path=API_KEY,
-                              webhook_url='https://arcane-tor-42713.herokuapp.com/' + API_KEY)
+                              webhook_url='https://gfhelper-bot.herokuapp.com/' + API_KEY)
 
     updater.idle()
 
