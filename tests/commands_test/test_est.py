@@ -43,6 +43,11 @@ def test_est_reach_success(mocked_update, mocked_context):
 
 
 @pytest.mark.skip(reason="yet to implement")
+def test_est_reach_failure():
+    pass
+
+
+@pytest.mark.skip(reason="yet to implement")
 def test_est_travel():
     pass
 
