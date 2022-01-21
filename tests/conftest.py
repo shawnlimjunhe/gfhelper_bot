@@ -11,4 +11,6 @@ def mocked_update():
 
 @pytest.fixture
 def mocked_context():
-    return mock.Mock()
+    mocked_context = mock.Mock()
+    mocked_context.user_data = {}
+    return mocked_context

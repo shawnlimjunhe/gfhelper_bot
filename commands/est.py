@@ -13,14 +13,32 @@ from telegram.ext import (
 
 EST_REACH, EST_TRAVEL, EST_READY = range(3)
 
-
-def est(update: Update, context: CallbackContext) -> int:
-    """starts the conversation to estimate the time to start getting ready"""
-    update.message.reply_text(
+est_text_map = {
+    'est_entry': (
         common.hedgehog +
         'What time do you need to be there by?\n'
         '(e.g 930a or 1030p)\n\n'
         'send /cancel anytime to cancel'
+    ),
+    'est_reach_failure':
+    (
+        common.hedgehog +
+        'Sorry, I could not process what you sent\n'
+        'Please send the time in HH:MM period (a or p)'
+    ),
+    'est_travel_failure':
+    (
+        common.hedgehog +
+        'Sorry, your time was invalid, please try again'
+    )
+}
+
+
+def est(update: Update, context: CallbackContext) -> int:
+    """starts the conversation to estimate the time to start getting ready"""
+
+    update.message.reply_text(
+        est_text_map['est_entry']
     )
 
     return EST_REACH
@@ -37,7 +55,7 @@ def est_reach(update: Update, context: CallbackContext) -> int:
         update.message.reply_text(
             common.hedgehog +
             "So you have to reach at "
-            f"{context.user_data['reach_time'].strftime(common.time_format)}\n\n"
+            f"{time.strftime(common.time_format)}\n\n"
             "How long do you think you will take to get there?\n"
             "\(e\.g\. 1h or 1h 30m or 15m\)",
             parse_mode=ParseMode.MARKDOWN_V2
@@ -46,11 +64,7 @@ def est_reach(update: Update, context: CallbackContext) -> int:
         return EST_TRAVEL
 
     except ValueError:
-        update.message.reply_text(
-            common.hedgehog +
-            'Sorry, I could not process what you sent\n'
-            'Please send the time in HH:MM period (a or p)'
-        )
+        update.message.reply_text(est_text_map['est_reach_failure'])
         return EST_REACH
 
 
@@ -87,8 +101,7 @@ def est_travel(update: Update, context: CallbackContext) -> int:
 
     except ValueError:
         update.message.reply_text(
-            common.hedgehog +
-            f'Sorry, your time was invalid as, please try again'
+            est_text_map['est_travel_failure']
         )
         return EST_TRAVEL
 
@@ -97,7 +110,7 @@ def est_skip_ready(update: Update, context: CallbackContext) -> int:
     """gives the user the time to leave"""
     update.message.reply_text(
         common.hedgehog +
-        f'How else might i /help you?'
+        'How else might i /help you?'
     )
 
     return ConversationHandler.END
