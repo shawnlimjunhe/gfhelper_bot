@@ -115,7 +115,7 @@ def sleep(update: Update, context: CallbackContext) -> int:
 
 def sleep_now(update: Update, context: CallbackContext) -> int:
     curr = utils.get_datetime_utc_now()
-    time_to_sleep = utils.get_datetime_sgt_now()
+    time_to_sleep = utils.convert_utc_to_sgt(curr)
 
     wake_times = [(curr + dt.timedelta(minutes=20))]
 
@@ -127,7 +127,6 @@ def sleep_now(update: Update, context: CallbackContext) -> int:
 
     wake_time_str = sleep_time_arr_to_str(wake_times)
 
-    
     update.message.reply_text(
         common.hedgehog +
         "If you sleep now at "
