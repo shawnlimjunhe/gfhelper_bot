@@ -51,11 +51,12 @@ def est_reach(update: Update, context: CallbackContext) -> int:
 
     try:
         time = utils.process_hhmm_time(reach_time)
+        sgt_time = utils.convert_utc_to_sgt(time)
         context.user_data['reach_time'] = time
         update.message.reply_text(
             common.hedgehog +
             "So you have to reach at "
-            f"{time.strftime(common.time_format)}\n\n"
+            f"{sgt_time.strftime(common.time_format)}\n\n"
             "How long do you think you will take to get there?\n"
             "\(e\.g\. 1h or 1h 30m or 15m\)",
             parse_mode=ParseMode.MARKDOWN_V2
@@ -81,16 +82,17 @@ def est_travel(update: Update, context: CallbackContext) -> int:
 
         reach_time = context.user_data['reach_time']
 
-        time_to_leave = dt.datetime.combine(
-            dt.date.today(), reach_time
-        ) + delta
+        time_to_leave = reach_time + delta
+
+        sgt_reach_time = utils.convert_sgt_to_utc(reach_time)
+        sgt_time_to_leave = utils.convert_sgt_to_utc(time_to_leave)
 
         update.message.reply_text(
             common.hedgehog +
             "You will need to leave the house at "
-            + utils.underline_str(f"{time_to_leave.time().strftime(common.time_format)}\n") +
+            + utils.underline_str(f"{sgt_time_to_leave.strftime(common.time_format)}\n") +
             "to reach on time at "
-            f"{reach_time.strftime(common.time_format)}\n\n"
+            f"{sgt_reach_time.strftime(common.time_format)}\n\n"
             "How long do you think you will need to get ready?\n"
             "\(e\.g\. 1h or 1h 30m or 15m\)\n\n"
             "send /skip if you wish to skip this step",
@@ -125,21 +127,21 @@ def est_ready(update: Update, context: CallbackContext) -> int:
             delta = utils.process_h_or_m_time(ready_time)
 
         reach_time = context.user_data['reach_time']
-
-        time_to_leave = dt.datetime.combine(
-            dt.date.today(), reach_time
-        ) + context.user_data['travel_timedelta']
-
+        time_to_leave = reach_time + context.user_data['travel_timedelta']
         time_to_ready = time_to_leave + delta
+
+        sgt_reach_time = utils.convert_utc_to_sgt(reach_time)
+        sgt_time_to_leave = utils.convert_utc_to_sgt(time_to_leave)
+        sgt_time_to_ready = utils.convert_utc_to_sgt(time_to_ready)
 
         update.message.reply_text(
             common.hedgehog +
             "You will need to start to get ready by "
-            + utils.underline_str(f"{time_to_ready.time().strftime(common.time_format)}\n") +
+            + utils.underline_str(f"{sgt_time_to_ready.time().strftime(common.time_format)}\n") +
             f"and leave the house at "
-            + utils.underline_str(f"{time_to_leave.time().strftime(common.time_format)}\n") +
+            + utils.underline_str(f"{sgt_time_to_leave.time().strftime(common.time_format)}\n") +
             f"to reach on time at "
-            f"{reach_time.strftime(common.time_format)}", parse_mode=ParseMode.MARKDOWN_V2
+            f"{sgt_reach_time.strftime(common.time_format)}", parse_mode=ParseMode.MARKDOWN_V2
         )
 
         update.message.reply_text(

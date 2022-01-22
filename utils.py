@@ -1,8 +1,38 @@
 import datetime as dt
+import pytz
+
+PYTZ_SGT = "Asia/Singapore"
+
+
+def get_datetime_utc_now():
+    """
+    Creates and returns an 'aware' datetime object in UTC
+    """
+    return pytz.utc.localize(dt.datetime.utcnow())
+
+
+def get_datetime_sgt_now():
+    """
+    Creates and returns an 'aware' datetime object in SGT
+    """
+    sg_timezone = pytz.timezone(PYTZ_SGT)
+    d_naive = dt.datetime.now()
+    return sg_timezone.localize(d_naive)
+
+
+def convert_utc_to_sgt(date: dt.datetime) -> dt.datetime:
+    return date.astimezone(pytz.timezone(PYTZ_SGT))
+
+
+def convert_sgt_to_utc(date: dt.datetime) -> dt.datetime:
+    return date.astimezone(pytz.timezone("Etc/UTC"))
 
 
 def process_hhmm_time(txt: str) -> dt.time:
-    """process the HH:MM period format to datetime time object"""
+    """
+    process the HH:MM period format to an 'aware' datetime object and returns it
+
+    """
 
     txt = txt.replace(" ", "")
     # position of hour depends on whether input is in the form
@@ -24,11 +54,25 @@ def process_hhmm_time(txt: str) -> dt.time:
     if minute > 59:
         raise ValueError('minutes cannot be more than 59')
 
-    return dt.time(hour=int(hour), minute=minute)
+    sgt_now = get_datetime_sgt_now()
+    utc_now = get_datetime_utc_now()
+
+    sgt_processed_dt = sgt_now.replace(hour=int(hour), minute=minute)
+    utc_process_dt = convert_sgt_to_utc(sgt_processed_dt)
+
+    if utc_process_dt < utc_now:
+        utc_process_dt += dt.timedelta(days=1)
+
+    return utc_process_dt
 
 
 def process_h_or_m_time(txt: str) -> dt.timedelta:
-    """process the h or m time format, e.g. 10 m or 1 h"""
+    """
+    process the h or m time format, e.g. 10 m or 1 h
+    and returns a timedelta if successful
+
+    otherwise raises a ValueError if input is invalid
+    """
     if txt[-1] == 'h':
         # hours
         hours = int(txt[:-1].strip())
@@ -49,6 +93,12 @@ def process_h_or_m_time(txt: str) -> dt.timedelta:
 
 
 def process_hm_time(txt: str):
+    """
+    process the hm time format, e.g. 1h 10m
+    and returns a timedelta if successful
+
+    otherwise raises a ValueError if input is invalid
+    """
     hours = int(txt.split('h')[0])
     minutes_str = txt.split()[1]
     if 'm' in minutes_str:
@@ -62,4 +112,5 @@ def process_hm_time(txt: str):
 
 
 def underline_str(text: str) -> str:
+    """Returns a string that would be underlined formatted as underlined in MARKDOWN V2"""
     return ("__" + text + "__")

@@ -19,31 +19,22 @@ fall_asleep_timedelta = dt.timedelta(minutes=fall_asleep_time_minutes)
 sleep_cycle_timedelta = dt.timedelta(minutes=sleep_cycle_length)
 
 
-def sleep_time_arr_to_str(times: list[dt.time]) -> str:
+def sleep_time_arr_to_str(utc_datetimes: list[dt.datetime]) -> str:
     strs = []
-    for time in times:
+    for utc_datetime in utc_datetimes:
+        sgt_datetime = utils.convert_utc_to_sgt(utc_datetime)
         strs.append(utils.underline_str(
-            f"{time.strftime(common.time_format)}"))
+            f"{sgt_datetime.strftime(common.time_format)}"))
 
     return " or\n".join(strs)
 
 
-def get_sleeptimes_from_wake(waketime: dt.time) -> list[dt.time]:
+def get_sleeptimes_from_wake(wake_datetime: dt.datetime) -> list[dt.datetime]:
     """
     Converts waketime to datetime object to use timedelta
     To calculate sleep times
     """
-    now = dt.datetime.now()
-    wake_datetime = dt.datetime(
-        now.year,
-        now.month,
-        now.day,
-        waketime.hour,
-        waketime.minute
-    )
-
-    if wake_datetime < now:
-        wake_datetime += dt.timedelta(days=1)
+    now = utils.get_datetime_utc_now()
 
     time_difference = wake_datetime - now
     if time_difference.seconds < (10 * 60):
@@ -53,36 +44,40 @@ def get_sleeptimes_from_wake(waketime: dt.time) -> list[dt.time]:
     sleep_times = []
     nap_time_minutes = min(20, time_difference.seconds // 60)
     nap = wake_datetime - dt.timedelta(minutes=nap_time_minutes)
-    sleep_times.append(nap.time())
+    sleep_times.append(nap)
 
     curr = wake_datetime - fall_asleep_timedelta - sleep_cycle_timedelta
     i = 0
     while curr > now and i < 6:
-        sleep_times.append(curr.time())
+        new_dt = curr.replace()
+        sleep_times.append(new_dt)
         curr -= sleep_cycle_timedelta
         i += 1
 
     return sleep_times
 
 
-def process_sleep_times_text(sleep_times: list[dt.time], wake_time: dt.time) -> str:
+def process_sleep_times_text(sleep_times: list[dt.datetime], wake_time: dt.datetime) -> str:
+    sgt_wake_time = utils.convert_utc_to_sgt(wake_time)
+
     if not sleep_times:
         return (
             common.hedgehog +
             "Hmm, it seems like you don\'t have a lot of time\n"
             "before you have to wake up at "
-            f"{wake_time.strftime(common.time_format)}\.\.\.\n"
+            f"{sgt_wake_time.strftime(common.time_format)}\.\.\.\n"
             "maybe a cup of coffee will help ☕"
         )
 
     if len(sleep_times) == 1:
+        sgt_sleep_time = utils.convert_utc_to_sgt(sleep_times[0])
         return (
             common.hedgehog +
             "It seem's you have a bit to time to nap\!\n"
             "before you have to wake up at "
-            f"{wake_time.strftime(common.time_format)}\n"
+            f"{sgt_wake_time.strftime(common.time_format)}\n"
             "Sleep at "
-            + utils.underline_str(f"{sleep_times[0].strftime(common.time_format)}") +
+            + utils.underline_str(f"{sgt_sleep_time.strftime(common.time_format)}") +
             " for a power nap\! 💪"
         )
 
@@ -119,20 +114,24 @@ def sleep(update: Update, context: CallbackContext) -> int:
 
 
 def sleep_now(update: Update, context: CallbackContext) -> int:
-    curr = dt.datetime.now()
+    curr = utils.get_datetime_utc_now()
+    time_to_sleep = utils.get_datetime_sgt_now()
+
     wake_times = [(curr + dt.timedelta(minutes=20))]
 
     curr += fall_asleep_timedelta
     for i in range(6):
         curr += sleep_cycle_timedelta
-        wake_times.append(curr.time())
+        new_datetime = curr.replace()
+        wake_times.append(new_datetime)
 
     wake_time_str = sleep_time_arr_to_str(wake_times)
 
+    
     update.message.reply_text(
         common.hedgehog +
         "If you sleep now at "
-        + utils.underline_str(f"{dt.datetime.now().time().strftime(common.time_format)}\n") +
+        + utils.underline_str(f"{time_to_sleep.strftime(common.time_format)}\n") +
         "you should wake up at:\n" +
         wake_time_str,
         reply_markup=ReplyKeyboardRemove(),
