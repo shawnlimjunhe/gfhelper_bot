@@ -30,7 +30,8 @@ def convert_sgt_to_utc(date: dt.datetime) -> dt.datetime:
 
 def process_hhmm_time(txt: str) -> dt.time:
     """
-    process the HH:MM period format to an 'aware' datetime object and returns it
+    process the HH:MM period format in SGT and 
+    creates an 'aware' datetime object in UTC 
 
     """
 
@@ -78,18 +79,18 @@ def process_h_or_m_time(txt: str) -> dt.timedelta:
         hours = int(txt[:-1].strip())
         if hours > 23:
             raise ValueError('hours cannot be more than 23')
+        if hours == 0:
+            raise ValueError('hours cannot be 0')
 
         return dt.timedelta(hours=-hours)
 
     else:
         # minutes
         minutes = int(txt[:-1].strip())
-        hours = 0
-        while minutes > 60:
-            hours += 1
-            minutes -= 60
+        if minutes == 0:
+            raise ValueError('minutes cannot be 0')
 
-        return dt.timedelta(hours=-hours, minutes=-minutes)
+        return dt.timedelta(minutes=-minutes)
 
 
 def process_hm_time(txt: str):
