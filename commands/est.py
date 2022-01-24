@@ -1,4 +1,3 @@
-from numpy import outer
 import common
 import utils
 import datetime as dt
