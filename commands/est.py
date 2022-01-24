@@ -84,8 +84,8 @@ def est_travel(update: Update, context: CallbackContext) -> int:
 
         time_to_leave = reach_time + delta
 
-        sgt_reach_time = utils.convert_sgt_to_utc(reach_time)
-        sgt_time_to_leave = utils.convert_sgt_to_utc(time_to_leave)
+        sgt_reach_time = utils.convert_utc_to_sgt(reach_time)
+        sgt_time_to_leave = utils.convert_utc_to_sgt(time_to_leave)
 
         update.message.reply_text(
             common.hedgehog +
