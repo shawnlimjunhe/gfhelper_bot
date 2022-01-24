@@ -105,10 +105,11 @@ def main() -> None:
     if IS_DEV:
         updater.start_polling()
     else:
+        HEROKU_APP_NAME = os.environ['HEROKU_APP_NAME']
         updater.start_webhook(listen="0.0.0.0",
                               port=int(PORT),
                               url_path=API_KEY,
-                              webhook_url='https://gfhelper-bot.herokuapp.com/' + API_KEY)
+                              webhook_url='https://' + HEROKU_APP_NAME + '.herokuapp.com/' + API_KEY)
 
     updater.idle()
 
