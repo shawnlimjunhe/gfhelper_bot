@@ -164,11 +164,9 @@ def sleep_wake_time(update: Update, context: CallbackContext) -> int:
 
         return ConversationHandler.END
 
-    except ValueError:
+    except ValueError as err:
         update.message.reply_text(
-            common.hedgehog +
-            'Sorry, I could not process what you sent\n'
-            'Please send the time in HH:MM period (a or p)'
+            utils.time_input_err_to_str(err.args[0])
         )
 
         return SLEEP_WAKE

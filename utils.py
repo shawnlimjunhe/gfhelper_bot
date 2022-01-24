@@ -1,4 +1,5 @@
 import datetime as dt
+import common
 import pytz
 
 PYTZ_SGT = "Asia/Singapore"
@@ -51,7 +52,7 @@ def process_hhmm_time(txt: str) -> dt.time:
         hour = 0
 
     if hour > 23:
-        raise ValueError('hour cannot be more than 23')
+        raise ValueError('hours cannot be more than 23')
     if minute > 59:
         raise ValueError('minutes cannot be more than 59')
 
@@ -124,3 +125,12 @@ def underline_str(text: str) -> str:
     if not text:
         return text
     return ("__" + text + "__")
+
+
+def time_input_err_to_str(err_msg: str) -> str:
+    return (
+        common.hedgehog +
+        'Sorry the time you send was invalid as:\n' +
+        f'{err_msg}\n' +
+        'please try again!'
+    )

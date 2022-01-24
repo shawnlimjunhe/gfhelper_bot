@@ -13,7 +13,10 @@ def test_est(mocked_update, mocked_context):
     # assertions
     mocked_update.message.reply_text.assert_called()
     mocked_update.message.reply_text.assert_called_with(
-        est.est_text_map['est_entry']
+        common.hedgehog +
+        'What time do you need to be there by?\n'
+        '(e.g 930a or 1030p)\n\n'
+        'send /cancel anytime to cancel'
     )
 
     assert resp == est.EST_REACH

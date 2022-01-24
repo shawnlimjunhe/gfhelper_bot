@@ -34,15 +34,15 @@ def test_process_hhmm_time(hour, minute, hhmm_string):
 @pytest.mark.parametrize(
     "hhmm_string, except_msg",
     [
-        ('1300p', 'hour cannot be more than 23'),
+        ('1300p', 'hours cannot be more than 23'),
         ('1260p', 'minutes cannot be more than 59'),
-        ('1360a', 'hour cannot be more than 23')
+        ('1360a', 'hours cannot be more than 23')
     ]
 )
-def test_process_hhmm_time_fail(hhmm_string, except_msg):
-    with pytest.raises(ValueError) as exc_info:
+def test_process_hhmm_time_failure(hhmm_string, except_msg):
+    with pytest.raises(ValueError) as excinfo:
         utils.process_hhmm_time(hhmm_string)
-    assert str(exc_info.value) == except_msg
+    assert str(excinfo.value) == except_msg
 
 
 @pytest.mark.parametrize(
@@ -75,7 +75,7 @@ def test_process_h_or_m_time(hours, minutes, h_or_m_str):
         ('0m', 'minutes cannot be 0')
     ]
 )
-def test_process_hhmm_time_fail(h_or_m_str, except_msg):
+def test_process_hhmm_time_failure(h_or_m_str, except_msg):
     with pytest.raises(ValueError) as exc_info:
         utils.process_h_or_m_time(h_or_m_str)
     assert str(exc_info.value) == except_msg
@@ -106,7 +106,7 @@ def test_process_hm_time(hours, minutes, hm_time_str):
         ('1h 60 m', 'minutes cannot be more than 59')
     ]
 )
-def test_process_hhmm_time_fail(hm_str, except_msg):
+def test_process_hhmm_time_exceptions(hm_str, except_msg):
     with pytest.raises(ValueError) as exc_info:
         utils.process_hm_time(hm_str)
     assert str(exc_info.value) == except_msg

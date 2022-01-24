@@ -1,3 +1,4 @@
+from numpy import outer
 import common
 import utils
 import datetime as dt
@@ -13,32 +14,15 @@ from telegram.ext import (
 
 EST_REACH, EST_TRAVEL, EST_READY = range(3)
 
-est_text_map = {
-    'est_entry': (
-        common.hedgehog +
-        'What time do you need to be there by?\n'
-        '(e.g 930a or 1030p)\n\n'
-        'send /cancel anytime to cancel'
-    ),
-    'est_reach_failure':
-    (
-        common.hedgehog +
-        'Sorry, I could not process what you sent\n'
-        'Please send the time in HH:MM period (a or p)'
-    ),
-    'est_travel_failure':
-    (
-        common.hedgehog +
-        'Sorry, your time was invalid, please try again'
-    )
-}
-
 
 def est(update: Update, context: CallbackContext) -> int:
     """starts the conversation to estimate the time to start getting ready"""
 
     update.message.reply_text(
-        est_text_map['est_entry']
+        common.hedgehog +
+        'What time do you need to be there by?\n'
+        '(e.g 930a or 1030p)\n\n'
+        'send /cancel anytime to cancel'
     )
 
     return EST_REACH
@@ -65,7 +49,9 @@ def est_reach(update: Update, context: CallbackContext) -> int:
         return EST_TRAVEL
 
     except ValueError as err:
-        update.message.reply_text(est_text_map['est_reach_failure'])
+        update.message.reply_text(
+            utils.time_input_err_to_str(err.args[0])
+        )
         return EST_REACH
 
 
@@ -102,9 +88,8 @@ def est_travel(update: Update, context: CallbackContext) -> int:
         return EST_READY
 
     except ValueError as err:
-        print(err.args[0])
         update.message.reply_text(
-            est_text_map['est_travel_failure']
+            utils.time_input_err_to_str(err.args[0])
         )
         return EST_TRAVEL
 
@@ -152,10 +137,9 @@ def est_ready(update: Update, context: CallbackContext) -> int:
 
         return ConversationHandler.END
 
-    except ValueError:
+    except ValueError as err:
         update.message.reply_text(
-            common.hedgehog +
-            f'Sorry, your time was invalid as, please try again'
+            utils.time_input_err_to_str(err.args[0])
         )
         return EST_READY
 
