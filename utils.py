@@ -109,9 +109,18 @@ def process_hm_time(txt: str):
 
     if minutes > 59:
         raise ValueError('minutes cannot be more than 59')
+
+    if hours > 23:
+        raise ValueError('hours cannot be more than 23')
+
+    if minutes == 0 and hours == 0:
+        raise ValueError('hours and minutes cannot both be 0')
+
     return dt.timedelta(hours=-hours, minutes=-minutes)
 
 
 def underline_str(text: str) -> str:
     """Returns a string that would be underlined formatted as underlined in MARKDOWN V2"""
+    if not text:
+        return text
     return ("__" + text + "__")

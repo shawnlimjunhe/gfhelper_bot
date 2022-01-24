@@ -81,11 +81,32 @@ def test_process_hhmm_time_fail(h_or_m_str, except_msg):
     assert str(exc_info.value) == except_msg
 
 
-@pytest.mark.skip(reason="yet to implement")
-def test_process_hm_time():
-    pass
+@pytest.mark.parametrize(
+    'hours, minutes, hm_time_str',
+    [
+        (-1, -10, '1h 10m'),
+        (-23, 0, '23h 0m'),
+        (0, -1, '00h 1m'),
+    ]
+)
+def test_process_hm_time(hours, minutes, hm_time_str):
+    timedelta = datetime.timedelta(hours=hours, minutes=minutes)
+
+    test_time_delta = utils.process_hm_time(hm_time_str)
+
+    assert timedelta.seconds == test_time_delta.seconds
 
 
-@pytest.mark.skip(reason="yet to implement")
-def test_underline_str():
-    pass
+@pytest.mark.parametrize(
+    "hm_str, except_msg",
+    [
+        ('0h 0m', 'hours and minutes cannot both be 0'),
+        ('00h 00m', 'hours and minutes cannot both be 0'),
+        ('99h 00m', 'hours cannot be more than 23'),
+        ('1h 60 m', 'minutes cannot be more than 59')
+    ]
+)
+def test_process_hhmm_time_fail(hm_str, except_msg):
+    with pytest.raises(ValueError) as exc_info:
+        utils.process_hm_time(hm_str)
+    assert str(exc_info.value) == except_msg

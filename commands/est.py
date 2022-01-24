@@ -45,7 +45,7 @@ def est(update: Update, context: CallbackContext) -> int:
 
 
 def est_reach(update: Update, context: CallbackContext) -> int:
-    """process the reach time and 
+    """process the reach time and
     asks for the time needed to get there for the est command"""
     reach_time = update.message.text
 
@@ -64,7 +64,7 @@ def est_reach(update: Update, context: CallbackContext) -> int:
 
         return EST_TRAVEL
 
-    except ValueError:
+    except ValueError as err:
         update.message.reply_text(est_text_map['est_reach_failure'])
         return EST_REACH
 
@@ -101,7 +101,8 @@ def est_travel(update: Update, context: CallbackContext) -> int:
 
         return EST_READY
 
-    except ValueError:
+    except ValueError as err:
+        print(err.args[0])
         update.message.reply_text(
             est_text_map['est_travel_failure']
         )

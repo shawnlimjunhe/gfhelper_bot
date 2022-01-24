@@ -7,7 +7,7 @@ from telegram.ext import (
 hedgehog = '🦔: \n'
 hhmm_regex = '^\d{1,}\d{2}\s?[ap]$'
 h_or_m_regex = '^\d{1,3}[hm]$'
-h_m_regex = '^\d+h\s\d{1,2}m$'
+h_m_regex = '^\d{1,2}h\s\d{1,2}m$'
 time_format = "%I:%M %p"
 
 

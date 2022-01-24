@@ -1,4 +1,4 @@
-# girl friend helper telegram bot 🦔
+# girlfriend helper telegram bot 🦔
 
 [![Telegram](https://img.shields.io/badge/telegram-ready-brightgreen.svg)](https://t.me/girlfriendhelper_bot)
 
