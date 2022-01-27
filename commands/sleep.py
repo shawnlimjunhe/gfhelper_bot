@@ -15,11 +15,15 @@ from telegram.ext import (
 SLEEP_CHOICE, SLEEP_WAKE = range(2)
 fall_asleep_time_minutes = 10
 sleep_cycle_length = 90
+
 fall_asleep_timedelta = dt.timedelta(minutes=fall_asleep_time_minutes)
 sleep_cycle_timedelta = dt.timedelta(minutes=sleep_cycle_length)
 
 
 def sleep_time_arr_to_str(utc_datetimes: list[dt.datetime]) -> str:
+    """converts a list of 'aware' datetime objects in UTC to a single string of datetime objects formatted in SGT
+     for output to the user"""
+
     strs = []
     for utc_datetime in utc_datetimes:
         sgt_datetime = utils.convert_utc_to_sgt(utc_datetime)
@@ -31,8 +35,43 @@ def sleep_time_arr_to_str(utc_datetimes: list[dt.datetime]) -> str:
 
 def get_sleeptimes_from_wake(wake_datetime: dt.datetime) -> list[dt.datetime]:
     """
-    Converts waketime to datetime object to use timedelta
-    To calculate sleep times
+    Calculates the times to sleep given a time to wake up
+
+    Calculates the time(s) to sleep given a time to wake up. If the difference from current time to waketime
+    is less than 10 minutes, the returned list will be empty as the difference is too short to nap.
+    Else if the difference from current time to the waketime is at least greater than 10 minutes, 
+    the returned list will contain a nap time (maximum 20 minutes).
+
+    Any time difference of more than 1 hour 40 minutes and 9 hours 40 minutes will append sleep times in 90
+    minute intervals after accounting for 10 minutes to fall asleep.
+
+    Parameters
+    ----------
+    wake_datetime
+        time at which the user wants to wake up in UTC time
+
+    Returns
+    -------
+    list[datetime.datetime]
+        times at which the user should wake up (if any), in UTC time
+
+    Examples
+    --------
+    wake times will be 9:00 a.m. UTC for all examples
+    >>> get_sleeptimes_from_wake(datetime(hours=9, minutes=00)) # current time: 8:51 a.m.
+    []
+
+    >>> get_sleeptimes_from_wake(datetime(hours=9, minutes=00)) # current time: 8:43 a.m.
+    [datetime(hours=8, minutes=43)]
+
+    >>> get_sleeptimes_from_wake(datetime(hours=9, minutes=00)) # current time: 8:20 a.m.
+    [datetime(hours=8, minutes=40)]
+
+    >>> get_sleeptimes_from_wake(datetime(hours=9, minutes=00)) # current time: 11:49 p.m.
+    [datetime(hours=8, minutes=40), datetime(hours=7, minutes=20), datetime(hours=5, minutes=50),
+    datetime(hours=4, minutes=20), datetime(hours=2, minutes=50), datetime(hours=1, minutes=20),
+    datetime(hours=23, minutes=50)
+    ]
     """
     now = utils.get_datetime_utc_now()
 
@@ -58,6 +97,7 @@ def get_sleeptimes_from_wake(wake_datetime: dt.datetime) -> list[dt.datetime]:
 
 
 def process_sleep_times_text(sleep_times: list[dt.datetime], wake_time: dt.datetime) -> str:
+    """Returns a different dialogue depending on the number of sleep_times calculated"""
     sgt_wake_time = utils.convert_utc_to_sgt(wake_time)
 
     if not sleep_times:
@@ -91,6 +131,7 @@ def process_sleep_times_text(sleep_times: list[dt.datetime], wake_time: dt.datet
 
 def sleep(update: Update, context: CallbackContext) -> int:
     """starts the conversation to determine sleep or wakeup time"""
+
     sleep_reply_keyboard = [['Sleep Now', 'Wake Time']]
 
     update.message.reply_text(

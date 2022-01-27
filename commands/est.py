@@ -28,8 +28,7 @@ def est(update: Update, context: CallbackContext) -> int:
 
 
 def est_reach(update: Update, context: CallbackContext) -> int:
-    """process the reach time and
-    asks for the time needed to get there for the est command"""
+    """processes the time to reach and prompts the user for the time needed to reach"""
     reach_time = update.message.text
 
     try:
@@ -55,7 +54,9 @@ def est_reach(update: Update, context: CallbackContext) -> int:
 
 
 def est_travel(update: Update, context: CallbackContext) -> int:
-    """asks for the time need to get ready or whether to skip """
+    """
+    Processes the travel time and prompts the user for the time need to get ready or
+    whether the user wishes to skip this step"""
     travel_time = update.message.text
     try:
         if 'h' in travel_time and 'm' in travel_time:
@@ -104,6 +105,7 @@ def est_skip_ready(update: Update, context: CallbackContext) -> int:
 
 
 def est_ready(update: Update, context: CallbackContext) -> int:
+    """processes the time to get ready and outputs the time to get ready and time to leave"""
     ready_time = update.message.text
     try:
         if 'h' in ready_time and 'm' in ready_time:

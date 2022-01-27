@@ -31,7 +31,7 @@ command_mapping = {
 
 invalid_command_txt = (
     common.hedgehog +
-    "Sorry, I did not understand that common :("
+    "Sorry, I did not understand that command :("
 )
 
 

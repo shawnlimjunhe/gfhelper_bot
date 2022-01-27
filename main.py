@@ -3,6 +3,7 @@ import html
 import traceback
 import json
 import telegram
+import logging
 
 from setuptools import Command
 from telegram import Update, ReplyKeyboardMarkup, ParseMode
@@ -13,7 +14,7 @@ from telegram.ext import (
     MessageHandler,
     Filters
 )
-import logging
+
 from dotenv import load_dotenv
 
 import common
@@ -36,18 +37,24 @@ logger = logging.getLogger(__name__)
 
 
 def start(update: Update, context: CallbackContext):
+    """Dialogue when the start command is given"""
+
     text = common.hedgehog + \
         f'chirp chirp \nHello there {update.message.from_user.first_name}!\nlet me /help you!'
     context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
 def unknown(update: Update, context: CallbackContext):
+    """Dialogue when the user issues a command that is not specified"""
+
     context.bot.send_message(chat_id=update.effective_chat.id,
                              text=(common.hedgehog +
                                    "Sorry, I didn't understand that command."))
 
 
 def error_handler(update: object, context: CallbackContext) -> None:
+    """Sends a detailed error message to the developer when an unexpected exception occurs"""
+
     try:
         DEVELOPER_CHAT_ID = os.environ["DEVELOPER_CHAT_ID"]
         """Log the error and send a telegram message to notify the developer."""

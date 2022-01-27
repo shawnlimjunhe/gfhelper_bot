@@ -13,6 +13,7 @@ time_format = "%I:%M %p"
 
 def convo_cancel(update: Update, context: CallbackContext) -> int:
     """Cancels and ends the conversation"""
+
     update.message.reply_text(
         hedgehog +
         'Cancelled! Anything else i can /help you with?', reply_markup=ReplyKeyboardRemove()
@@ -22,6 +23,7 @@ def convo_cancel(update: Update, context: CallbackContext) -> int:
 
 
 def convo_except(update: Update, context: CallbackContext) -> int:
+    """Generic message to send the user when there is an error"""
     update.message.reply_text(
         hedgehog +
         "sorry i didn't understand that. \n"
